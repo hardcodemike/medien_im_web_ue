@@ -1,6 +1,6 @@
 ### Tuts+ Tutorial: Creating a simple 3D endless runner using three js
 
-#### Instructor: Juwal Bose
+#### Instructor: Juwal Bose lol
 
 Three js is a powerful js framework to create native web 3D content. This is an example of a 3D endless runner or roller game with simple mechanics. You will use the arrow keys to control a snowball rolling down a mountain side in order to dodge the trees in the path. There is no art involved & all visuals are created in code.
 
