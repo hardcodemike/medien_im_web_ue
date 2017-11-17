@@ -31,7 +31,7 @@ var jumping;
 var treeReleaseInterval=0.5;
 var lastTreeReleaseTime=0;
 var treesInPath;
-var treesPool;
+var cucumberPool;
 var particleGeometry;
 var particleCount=20;
 var explosionPower =1.06;
@@ -53,7 +53,7 @@ function createScene(){
 	hasCollided=false;
 	score=0;
 	treesInPath=[];
-	treesPool=[];
+	cucumberPool=[];
 	clock=new THREE.Clock();
 	clock.start();
 	heroRollingSpeed=(rollingSpeed*worldRadius/heroRadius)/5;
@@ -65,7 +65,7 @@ function createScene(){
     scene.fog = new THREE.FogExp2( 0xf0fff0, 0.14 );
     camera = new THREE.PerspectiveCamera( 60, sceneWidth / sceneHeight, 0.1, 1000 );//perspective camera
     renderer = new THREE.WebGLRenderer({alpha:true});//renderer with transparent backdrop
-    renderer.setClearColor(0xfffafa, 1); 
+    renderer.setClearColor(0xfffafa, 1);
     renderer.shadowMap.enabled = true;//enable shadow
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setSize( sceneWidth, sceneHeight );
@@ -73,12 +73,12 @@ function createScene(){
 	dom.appendChild(renderer.domElement);
 	stats = new Stats();
 	dom.appendChild(stats.dom);
-	createTreesPool();
+	createCucumberPool();
 	addWorld();
 	addHero();
 	addLight();
 	addExplosion();
-	
+
 	camera.position.z = 6.5;
 	camera.position.y = 3.5;
 	orbitControl = new THREE.OrbitControls( camera, renderer.domElement );//helper to rotate around in scene
@@ -92,11 +92,11 @@ function createScene(){
 	orbitControl.maxPolarAngle = 1.1;
 	orbitControl.minAzimuthAngle = -0.2;
 	orbitControl.maxAzimuthAngle = 0.2;
-	
+
 	window.addEventListener('resize', onWindowResize, false);//resize callback
 
 	document.onkeydown = handleKeyDown;
-	
+
 	scoreText = document.createElement('div');
 	scoreText.style.position = 'absolute';
 	//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
@@ -122,12 +122,12 @@ function addExplosion(){
 	scene.add( particles );
 	particles.visible=false;
 }
-function createTreesPool(){
-	var maxTreesInPool=10;
-	var newTree;
-	for(var i=0; i<maxTreesInPool;i++){
-		newTree=createTree();
-		treesPool.push(newTree);
+function createCucumberPool(){
+	var maxCucumbersInPool=10;
+	var newCucumber;
+	for(var i=0; i<maxCucumbersInPool;i++){
+		newCucumber=createCucumber();
+		cucumberPool.push(newCucumber);
 	}
 }
 function handleKeyDown(keyEvent){
@@ -139,7 +139,7 @@ function handleKeyDown(keyEvent){
 		}else if(currentLane==rightLane){
 			currentLane=middleLane;
 		}else{
-			validMove=false;	
+			validMove=false;
 		}
 	} else if ( keyEvent.keyCode === 39) {//right
 		if(currentLane==middleLane){
@@ -147,7 +147,7 @@ function handleKeyDown(keyEvent){
 		}else if(currentLane==leftLane){
 			currentLane=middleLane;
 		}else{
-			validMove=false;	
+			validMove=false;
 		}
 	}else{
 		if ( keyEvent.keyCode === 38){//up, jump
@@ -180,7 +180,7 @@ function addWorld(){
 	var tiers=40;
 	var sphereGeometry = new THREE.SphereGeometry( worldRadius, sides,tiers);
 	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0xfffafa ,shading:THREE.FlatShading} )
-	
+
 	var vertexIndex;
 	var vertexVector= new THREE.Vector3();
 	var nextVertexVector= new THREE.Vector3();
@@ -218,7 +218,7 @@ function addWorld(){
 	scene.add( rollingGroundSphere );
 	rollingGroundSphere.position.y=-24;
 	rollingGroundSphere.position.z=2;
-	addWorldTrees();
+	addWorldCucumbers();
 }
 function addLight(){
 	var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
@@ -233,35 +233,35 @@ function addLight(){
 	sun.shadow.camera.near = 0.5;
 	sun.shadow.camera.far = 50 ;
 }
-function addPathTree(){
+function addPathCucumber(){
 	var options=[0,1,2];
 	var lane= Math.floor(Math.random()*3);
-	addTree(true,lane);
+	addCucumber(true,lane);
 	options.splice(lane,1);
 	if(Math.random()>0.5){
 		lane= Math.floor(Math.random()*2);
-		addTree(true,options[lane]);
+		addCucumber(true,options[lane]);
 	}
 }
-function addWorldTrees(){
-	var numTrees=36;
+function addWorldCucumbers(){
+	var numCucumbers=36;
 	var gap=6.28/36;
-	for(var i=0;i<numTrees;i++){
-		addTree(false,i*gap, true);
-		addTree(false,i*gap, false);
+	for(var i=0;i<numCucumbers;i++){
+		addCucumber(false,i*gap, true);
+		addCucumber(false,i*gap, false);
 	}
 }
-function addTree(inPath, row, isLeft){
-	var newTree;
+function addCucumber(inPath, row, isLeft){
+	var newCucumber;
 	if(inPath){
-		if(treesPool.length==0)return;
-		newTree=treesPool.pop();
-		newTree.visible=true;
+		if(cucumberPool.length==0)return;
+		newCucumber=cucumberPool.pop();
+		newCucumber.visible=true;
 		//console.log("add tree");
-		treesInPath.push(newTree);
+		treesInPath.push(newCucumber);
 		sphericalHelper.set( worldRadius-0.3, pathAngleValues[row], -rollingGroundSphere.rotation.x+4 );
 	}else{
-		newTree=createTree();
+		newCucumber=createCucumber();
 		var forestAreaAngle=0;//[1.52,1.57,1.62];
 		if(isLeft){
 			forestAreaAngle=1.68+Math.random()*0.1;
@@ -270,45 +270,63 @@ function addTree(inPath, row, isLeft){
 		}
 		sphericalHelper.set( worldRadius-0.3, forestAreaAngle, row );
 	}
-	newTree.position.setFromSpherical( sphericalHelper );
+	newCucumber.position.setFromSpherical( sphericalHelper );
 	var rollingGroundVector=rollingGroundSphere.position.clone().normalize();
-	var treeVector=newTree.position.clone().normalize();
-	newTree.quaternion.setFromUnitVectors(treeVector,rollingGroundVector);
-	newTree.rotation.x+=(Math.random()*(2*Math.PI/10))+-Math.PI/10;
-	
-	rollingGroundSphere.add(newTree);
+	var cucumberVektor=newCucumber.position.clone().normalize();
+	newCucumber.quaternion.setFromUnitVectors(cucumberVektor,rollingGroundVector);
+	newCucumber.rotation.x+=(Math.random()*(2*Math.PI/10))+-Math.PI/10;
+
+	rollingGroundSphere.add(newCucumber);
 }
-function createTree(){
-	var sides=8;
-	var tiers=6;
-	var scalarMultiplier=(Math.random()*(0.25-0.1))+0.05;
-	var midPointVector= new THREE.Vector3();
-	var vertexVector= new THREE.Vector3();
-	var treeGeometry = new THREE.ConeGeometry( 0.5, 1, sides, tiers);
-	var treeMaterial = new THREE.MeshStandardMaterial( { color: 0x33ff33,shading:THREE.FlatShading  } );
-	var offset;
-	midPointVector=treeGeometry.vertices[0].clone();
-	var currentTier=0;
-	var vertexIndex;
-	blowUpTree(treeGeometry.vertices,sides,0,scalarMultiplier);
-	tightenTree(treeGeometry.vertices,sides,1);
-	blowUpTree(treeGeometry.vertices,sides,2,scalarMultiplier*1.1,true);
-	tightenTree(treeGeometry.vertices,sides,3);
-	blowUpTree(treeGeometry.vertices,sides,4,scalarMultiplier*1.2);
-	tightenTree(treeGeometry.vertices,sides,5);
-	var treeTop = new THREE.Mesh( treeGeometry, treeMaterial );
-	treeTop.castShadow=true;
-	treeTop.receiveShadow=false;
-	treeTop.position.y=0.9;
-	treeTop.rotation.y=(Math.random()*(Math.PI));
-	var treeTrunkGeometry = new THREE.CylinderGeometry( 0.1, 0.1,0.5);
-	var trunkMaterial = new THREE.MeshStandardMaterial( { color: 0x886633,shading:THREE.FlatShading  } );
-	var treeTrunk = new THREE.Mesh( treeTrunkGeometry, trunkMaterial );
-	treeTrunk.position.y=0.25;
-	var tree =new THREE.Object3D();
-	tree.add(treeTrunk);
-	tree.add(treeTop);
-	return tree;
+function createCucumber(){
+	// var sides=8;
+	// var tiers=6;
+	// var scalarMultiplier=(Math.random()*(0.25-0.1))+0.05;
+	// var midPointVector= new THREE.Vector3();
+	// var vertexVector= new THREE.Vector3();
+	// var treeGeometry = new THREE.ConeGeometry( 0.5, 1, sides, tiers);
+	// var treeMaterial = new THREE.MeshStandardMaterial( { color: 0x33ff33,shading:THREE.FlatShading  } );
+	// var offset;
+	// midPointVector=treeGeometry.vertices[0].clone();
+	// var currentTier=0;
+	// var vertexIndex;
+	// blowUpTree(treeGeometry.vertices,sides,0,scalarMultiplier);
+	// tightenTree(treeGeometry.vertices,sides,1);
+	// blowUpTree(treeGeometry.vertices,sides,2,scalarMultiplier*1.1,true);
+	// tightenTree(treeGeometry.vertices,sides,3);
+	// blowUpTree(treeGeometry.vertices,sides,4,scalarMultiplier*1.2);
+	// tightenTree(treeGeometry.vertices,sides,5);
+	// var treeTop = new THREE.Mesh( treeGeometry, treeMaterial );
+	// treeTop.castShadow=true;
+	// treeTop.receiveShadow=false;
+	// treeTop.position.y=0.9;
+	// treeTop.rotation.y=(Math.random()*(Math.PI));
+
+	// CUCUMBER MAKING PROCCES BY HARDCODEMIKE
+	// cucumber body
+	var cucumberTrunkGeometry = new THREE.CylinderGeometry( 0.1, 0.1,0.6,12,1,false,0.1);
+	var cucumberTrunkMaterial = new THREE.MeshStandardMaterial( { color: 0x33ff33,shading:THREE.FlatShading  } );
+	var cucumberbody = new THREE.Mesh( cucumberTrunkGeometry, cucumberTrunkMaterial );
+    cucumberbody.position.y=0.9;
+
+	// cucumber head
+	var cucumberhead = new THREE.CylinderGeometry( 0, 0.1, 0.1,12,1,false,0.1);
+	var cucumberheadMaterial = new THREE.MeshStandardMaterial( { color: 0x33ff33,shading:THREE.FlatShading});
+	var cucumberheadfinal = new THREE.Mesh( cucumberhead, cucumberheadMaterial);
+	cucumberheadfinal.position.y=1.25;
+
+	//cucumber feets
+    var cucumberfeet = new THREE.CylinderGeometry( 0.1, 0, 0.1,12,1,false,0.1);
+    var cucumberfeetMaterial = new THREE.MeshStandardMaterial( { color: 0x33ff33,shading:THREE.FlatShading});
+    var cucumberfeetfinal = new THREE.Mesh( cucumberfeet, cucumberfeetMaterial);
+    cucumberfeetfinal.position.y=0.55;
+
+
+	var cucumber =new THREE.Object3D();
+    cucumber.add(cucumberbody);
+    cucumber.add(cucumberheadfinal);
+    cucumber.add(cucumberfeetfinal);
+	return cucumber;
 }
 function blowUpTree(vertices,sides,currentTier,scalarMultiplier,odd){
 	var vertexIndex;
@@ -370,7 +388,7 @@ function update(){
     bounceValue-=gravity;
     if(clock.getElapsedTime()>treeReleaseInterval){
     	clock.start();
-    	addPathTree();
+    	addPathCucumber();
     	if(!hasCollided){
 			score+=2*treeReleaseInterval;
 			scoreText.innerHTML=score.toString();
@@ -403,7 +421,7 @@ function doTreeLogic(){
 		oneTree=treesToRemove[ index ];
 		fromWhere=treesInPath.indexOf(oneTree);
 		treesInPath.splice(fromWhere,1);
-		treesPool.push(oneTree);
+		cucumberPool.push(oneTree);
 		oneTree.visible=false;
 		console.log("remove tree");
 	});
