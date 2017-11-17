@@ -16,7 +16,7 @@ var heroSphere;
 var rollingSpeed=0.008;
 var heroRollingSpeed;
 var worldRadius=26;
-var heroRadius=0.2;
+var heroRadius=0.3;
 var sphericalHelper;
 var pathAngleValues;
 var heroBaseY=1.8;
@@ -56,7 +56,7 @@ function createScene(){
 	cucumberPool=[];
 	clock=new THREE.Clock();
 	clock.start();
-	heroRollingSpeed=(rollingSpeed*worldRadius/heroRadius)/5;
+	heroRollingSpeed=(rollingSpeed*worldRadius/heroRadius)/10;
 	sphericalHelper = new THREE.Spherical();
 	pathAngleValues=[1.52,1.57,1.62];
     sceneWidth=window.innerWidth;
@@ -163,10 +163,17 @@ function handleKeyDown(keyEvent){
 	}
 }
 function addHero(){
-	var sphereGeometry = new THREE.DodecahedronGeometry( heroRadius, 1);
+
+    // instantiate a loader
+    var loader = new THREE.JSONLoader();
+
+// load a resource
+    var jsonObject = loader.parse('src/scratch-cat.json');
+
+	//var sphereGeometry = new THREE.DodecahedronGeometry( heroRadius, 3);
 	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0xe5f2f2 ,shading:THREE.FlatShading} )
 	jumping=false;
-	heroSphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+	heroSphere = jsonObject;
 	heroSphere.receiveShadow = true;
 	heroSphere.castShadow=true;
 	scene.add( heroSphere );
