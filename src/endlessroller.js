@@ -174,6 +174,8 @@ function addHero(){
 	heroSphere.position.z=4.8;
 	currentLane=middleLane;
 	heroSphere.position.x=currentLane;
+
+
 }
 function addWorld(){
 	var sides=40;
