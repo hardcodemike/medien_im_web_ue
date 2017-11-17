@@ -115,7 +115,7 @@ function addExplosion(){
 		particleGeometry.vertices.push( vertex );
 	}
 	var pMaterial = new THREE.ParticleBasicMaterial({
-	  color: 0xfffafa,
+	  color: 0xff0000,
 	  size: 0.2
 	});
 	particles = new THREE.Points( particleGeometry, pMaterial );
