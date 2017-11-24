@@ -180,6 +180,7 @@ function addHero(){
 function addWorld(){
 	var sides=90;
 	var tiers=90;
+
 	var sphereGeometry = new THREE.SphereGeometry( worldRadius, sides,tiers);
 	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0x8B4513 ,shading:THREE.FlatShading} )
 
