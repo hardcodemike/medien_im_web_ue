@@ -116,7 +116,7 @@ function addExplosion(){
 	}
 	var pMaterial = new THREE.ParticleBasicMaterial({
 	  color: 0xff0000,
-	  size: 0.2
+	  size: 0.1
 	});
 	particles = new THREE.Points( particleGeometry, pMaterial );
 	scene.add( particles );
@@ -178,10 +178,10 @@ function addHero(){
 
 }
 function addWorld(){
-	var sides=40;
-	var tiers=40;
+	var sides=90;
+	var tiers=90;
 	var sphereGeometry = new THREE.SphereGeometry( worldRadius, sides,tiers);
-	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0xfffafa ,shading:THREE.FlatShading} )
+	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0x8B4513 ,shading:THREE.FlatShading} )
 
 	var vertexIndex;
 	var vertexVector= new THREE.Vector3();
@@ -447,7 +447,7 @@ function explode(){
 	for (var i = 0; i < particleCount; i ++ ) {
 		var vertex = new THREE.Vector3();
 		vertex.x = -0.2+Math.random() * 0.4;
-		vertex.y = -0.2+Math.random() * 0.4 ;
+		vertex.y = -0.2+Math.random() * 0.4;
 		vertex.z = -0.2+Math.random() * 0.4;
 		particleGeometry.vertices[i]=vertex;
 	}
