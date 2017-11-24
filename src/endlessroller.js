@@ -164,23 +164,85 @@ function handleKeyDown(keyEvent){
 }
 function addHero(){
 
-    // instantiate a loader
     var loader = new THREE.JSONLoader();
+    // load a resource
+    loader.load(
+        'src/monkey.json',
+        function (geometry, materials) {
+            geometry.computeBoundingBox();
 
-// load a resource
-    var jsonObject = loader.parse('src/scratch-cat.json');
+            maxLenght = Math.max(geometry.boundingBox.max.x - geometry.boundingBox.min.x, geometry.boundingBox.max.y - geometry.boundingBox.min.y);
+            maxLenght = Math.max(maxLenght, geometry.boundingBox.max.z - geometry.boundingBox.min.z);
+            scale = 1 / maxLenght;
 
-	//var sphereGeometry = new THREE.DodecahedronGeometry( heroRadius, 3);
+            var material = materials[ 0 ];
+            material.shininess = 0;
+            console.log(material);
+
+            var mesh = new THREE.Mesh(geometry, material);
+            mesh.scale.set(scale, scale, scale);
+//                    assignUVs(mesh);
+            jumping=false;
+            heroSphere = mesh;
+            heroSphere.receiveShadow = true;
+            heroSphere.castShadow=true;
+            scene.add( heroSphere );
+            heroSphere.position.y=heroBaseY;
+            heroSphere.position.z=4.8;
+            currentLane=middleLane;
+            heroSphere.position.x=currentLane;
+
+        }
+    );
+
+/*
+
+	var manager = new THREE.LoadingManager();
+    manager.onProgress = function ( item, loaded, total ) {
+
+        console.log( item, loaded, total );
+
+    };
+
+    var loader = new THREE.ObjectLoader(manager);
+    loader.load('src/climbing-cat-model.json', function ( object ) {
+
+        object.traverse( function ( child ) {
+
+            if ( child instanceof THREE.Mesh ) {
+
+                //child.material.map = texture;
+
+            }
+
+        } );
+
+        object.position.x = - 60;
+        object.rotation.x = 20* Math.PI / 180;
+        object.rotation.z = 20* Math.PI / 180;
+        object.scale.x = 30;
+        object.scale.y = 30;
+        object.scale.z = 30;
+        obj = object;
+        scene.add( obj );
+
+    } );
+*/
+    /* instantiate a loader
+    var loader = new THREE.ObjectLoader();
+
+	var sphereGeometry = new THREE.DodecahedronGeometry( heroRadius, 3);
 	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0xe5f2f2 ,shading:THREE.FlatShading} )
+
 	jumping=false;
-	heroSphere = jsonObject;
+    heroSphere = new THREE.Object3D(loader.load('src/climbing-cat-model.obj'));
 	heroSphere.receiveShadow = true;
 	heroSphere.castShadow=true;
 	scene.add( heroSphere );
 	heroSphere.position.y=heroBaseY;
 	heroSphere.position.z=4.8;
 	currentLane=middleLane;
-	heroSphere.position.x=currentLane;
+	heroSphere.position.x=currentLane; */
 
 
 }
