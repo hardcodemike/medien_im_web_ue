@@ -38,6 +38,7 @@ var explosionPower =1.06;
 var particles;
 var stats;
 var scoreText;
+var scoreLabel;
 var score;
 var hasCollided;
 
@@ -51,7 +52,7 @@ function init() {
 
 function createScene(){
 	hasCollided=false;
-	score=0;
+	score=9;
 	treesInPath=[];
 	cucumberPool=[];
 	clock=new THREE.Clock();
@@ -59,8 +60,8 @@ function createScene(){
 	heroRollingSpeed=(rollingSpeed*worldRadius/heroRadius)/10;
 	sphericalHelper = new THREE.Spherical();
 	pathAngleValues=[1.52,1.57,1.62];
-    sceneWidth=window.innerWidth;
-    sceneHeight=window.innerHeight;
+    sceneWidth=window.innerWidth-50;
+    sceneHeight=window.innerHeight-50;
     scene = new THREE.Scene();//the 3d scene
     scene.fog = new THREE.FogExp2( 0xf0fff0, 0.14 );
     camera = new THREE.PerspectiveCamera( 60, sceneWidth / sceneHeight, 0.1, 1000 );//perspective camera
@@ -97,15 +98,26 @@ function createScene(){
 
 	document.onkeydown = handleKeyDown;
 
+	//create the text for the lives
+	scoreLabel = document.createElement('div');
+	scoreLabel.style.position = 'absolute';
+	scoreLabel.style.width = 75;
+	scoreLabel.style.height = 100;
+	scoreLabel.innerHTML = 'Lives left: ';
+	scoreLabel.style.top = 10 + 'px';
+	scoreLabel.style.left = 100 +'px';
+	document.body.appendChild(scoreLabel);
+
+
 	scoreText = document.createElement('div');
 	scoreText.style.position = 'absolute';
 	//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 	scoreText.style.width = 100;
 	scoreText.style.height = 100;
 	//scoreText.style.backgroundColor = "blue";
-	scoreText.innerHTML = "0";
+	scoreText.innerHTML = "9";
 	scoreText.style.top = 10 + 'px';
-	scoreText.style.left = 100 + 'px';
+	scoreText.style.left = 175 + 'px';
 	document.body.appendChild(scoreText);
 }
 function addExplosion(){
@@ -244,7 +256,6 @@ function addHero(){
 	currentLane=middleLane;
 	heroSphere.position.x=currentLane; */
 
-
 }
 function addWorld(){
 	var sides=90;
@@ -252,7 +263,7 @@ function addWorld(){
 
 
 	var sphereGeometry = new THREE.SphereGeometry( worldRadius, sides,tiers);
-	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0x8B4513 ,shading:THREE.FlatShading} )
+	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0x8B4513 ,shading:THREE.FlatShading} );
 
 	var vertexIndex;
 	var vertexVector= new THREE.Vector3();
@@ -462,15 +473,16 @@ function update(){
     if(clock.getElapsedTime()>treeReleaseInterval){
     	clock.start();
     	addPathCucumber();
-    	if(!hasCollided){
-			score+=2*treeReleaseInterval;
+    	if(hasCollided){
+			score-=1.0;
 			scoreText.innerHTML=score.toString();
+			hasCollided=false;
 		}
     }
     doTreeLogic();
     doExplosionLogic();
     render();
-	requestAnimationFrame(update);//request next update
+	requestAnimationFrame(update); //request next update
 }
 function doTreeLogic(){
 	var oneTree;
