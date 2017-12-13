@@ -38,7 +38,6 @@ var explosionPower =1.06;
 var particles;
 var stats;
 var scoreText;
-var scoreLabel;
 var score;
 var hasCollided;
 
@@ -52,7 +51,7 @@ function init() {
 
 function createScene(){
 	hasCollided=false;
-	score=9;
+	score=0;
 	treesInPath=[];
 	cucumberPool=[];
 	clock=new THREE.Clock();
@@ -60,8 +59,8 @@ function createScene(){
 	heroRollingSpeed=(rollingSpeed*worldRadius/heroRadius)/10;
 	sphericalHelper = new THREE.Spherical();
 	pathAngleValues=[1.52,1.57,1.62];
-    sceneWidth=window.innerWidth-50;
-    sceneHeight=window.innerHeight-50;
+    sceneWidth=window.innerWidth;
+    sceneHeight=window.innerHeight;
     scene = new THREE.Scene();//the 3d scene
     scene.fog = new THREE.FogExp2( 0xf0fff0, 0.14 );
     camera = new THREE.PerspectiveCamera( 60, sceneWidth / sceneHeight, 0.1, 1000 );//perspective camera
@@ -98,26 +97,15 @@ function createScene(){
 
 	document.onkeydown = handleKeyDown;
 
-	//create the text for the lives
-	scoreLabel = document.createElement('div');
-	scoreLabel.style.position = 'absolute';
-	scoreLabel.style.width = 75;
-	scoreLabel.style.height = 100;
-	scoreLabel.innerHTML = 'Lives left: ';
-	scoreLabel.style.top = 10 + 'px';
-	scoreLabel.style.left = 100 +'px';
-	document.body.appendChild(scoreLabel);
-
-
 	scoreText = document.createElement('div');
 	scoreText.style.position = 'absolute';
 	//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 	scoreText.style.width = 100;
 	scoreText.style.height = 100;
 	//scoreText.style.backgroundColor = "blue";
-	scoreText.innerHTML = "9";
+	scoreText.innerHTML = "0";
 	scoreText.style.top = 10 + 'px';
-	scoreText.style.left = 175 + 'px';
+	scoreText.style.left = 100 + 'px';
 	document.body.appendChild(scoreText);
 }
 function addExplosion(){
@@ -176,26 +164,36 @@ function handleKeyDown(keyEvent){
 }
 function addHero(){
 
+    var sphereGeometry = new THREE.DodecahedronGeometry( heroRadius, 1);
+    var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0xe5f2f2 ,shading:THREE.FlatShading} )
+    jumping=false;
+    heroSphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+    heroSphere.receiveShadow = true;
+    heroSphere.castShadow=true;
+    scene.add( heroSphere );
+    heroSphere.position.y=heroBaseY;
+    heroSphere.position.z=4.8;
+    currentLane=middleLane;
+    heroSphere.position.x=currentLane;
+
+
     var loader = new THREE.JSONLoader();
-    // load a resource
+	console.log("1");
+
+
+
+
+
     loader.load(
-        'src/monkey.json',
-        function (geometry, materials) {
-            geometry.computeBoundingBox();
+        'src/kitty.json',
+        function ( geometry, materials ) {
 
-            maxLenght = Math.max(geometry.boundingBox.max.x - geometry.boundingBox.min.x, geometry.boundingBox.max.y - geometry.boundingBox.min.y);
-            maxLenght = Math.max(maxLenght, geometry.boundingBox.max.z - geometry.boundingBox.min.z);
-            scale = 1 / maxLenght;
-
+        	scene.remove(heroSphere);
             var material = materials[ 0 ];
-            material.shininess = 0;
-            console.log(material);
-
-            var mesh = new THREE.Mesh(geometry, material);
-            mesh.scale.set(scale, scale, scale);
-//                    assignUVs(mesh);
-            jumping=false;
-            heroSphere = mesh;
+            jumping = false;
+            heroSphere = new THREE.Mesh( geometry, material );
+            heroSphere.scale.set(0.3,.3,.3);
+            heroSphere.rotateY(1.60);
             heroSphere.receiveShadow = true;
             heroSphere.castShadow=true;
             scene.add( heroSphere );
@@ -203,58 +201,10 @@ function addHero(){
             heroSphere.position.z=4.8;
             currentLane=middleLane;
             heroSphere.position.x=currentLane;
-
+            console.log("3");
         }
     );
 
-/*
-
-	var manager = new THREE.LoadingManager();
-    manager.onProgress = function ( item, loaded, total ) {
-
-        console.log( item, loaded, total );
-
-    };
-
-    var loader = new THREE.ObjectLoader(manager);
-    loader.load('src/climbing-cat-model.json', function ( object ) {
-
-        object.traverse( function ( child ) {
-
-            if ( child instanceof THREE.Mesh ) {
-
-                //child.material.map = texture;
-
-            }
-
-        } );
-
-        object.position.x = - 60;
-        object.rotation.x = 20* Math.PI / 180;
-        object.rotation.z = 20* Math.PI / 180;
-        object.scale.x = 30;
-        object.scale.y = 30;
-        object.scale.z = 30;
-        obj = object;
-        scene.add( obj );
-
-    } );
-*/
-    /* instantiate a loader
-    var loader = new THREE.ObjectLoader();
-
-	var sphereGeometry = new THREE.DodecahedronGeometry( heroRadius, 3);
-	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0xe5f2f2 ,shading:THREE.FlatShading} )
-
-	jumping=false;
-    heroSphere = new THREE.Object3D(loader.load('src/climbing-cat-model.obj'));
-	heroSphere.receiveShadow = true;
-	heroSphere.castShadow=true;
-	scene.add( heroSphere );
-	heroSphere.position.y=heroBaseY;
-	heroSphere.position.z=4.8;
-	currentLane=middleLane;
-	heroSphere.position.x=currentLane; */
 
 }
 function addWorld(){
@@ -263,7 +213,7 @@ function addWorld(){
 
 
 	var sphereGeometry = new THREE.SphereGeometry( worldRadius, sides,tiers);
-	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0x8B4513 ,shading:THREE.FlatShading} );
+	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0x8B4513 ,shading:THREE.FlatShading} )
 
 	var vertexIndex;
 	var vertexVector= new THREE.Vector3();
@@ -443,6 +393,7 @@ function blowUpTree(vertices,sides,currentTier,scalarMultiplier,odd){
 		}
 	}
 }
+
 function tightenTree(vertices,sides,currentTier){
 	var vertexIndex;
 	var vertexVector= new THREE.Vector3();
@@ -462,27 +413,28 @@ function update(){
 	stats.update();
     //animate
     rollingGroundSphere.rotation.x += rollingSpeed;
-    heroSphere.rotation.x -= heroRollingSpeed;
-    if(heroSphere.position.y<=heroBaseY){
-    	jumping=false;
-    	bounceValue=(Math.random()*0.04)+0.005;
-    }
-    heroSphere.position.y+=bounceValue;
-    heroSphere.position.x=THREE.Math.lerp(heroSphere.position.x,currentLane, 2*clock.getDelta());//clock.getElapsedTime());
+    console.log("2");
+	heroSphere.rotation.x -= heroRollingSpeed;
+	if (heroSphere.position.y <= heroBaseY) {
+		jumping = false;
+		bounceValue = (Math.random() * 0.04) + 0.005;
+	}
+	heroSphere.position.y += bounceValue;
+	heroSphere.position.x = THREE.Math.lerp(heroSphere.position.x, currentLane, 2 * clock.getDelta());//clock.getElapsedTime());
+
     bounceValue-=gravity;
     if(clock.getElapsedTime()>treeReleaseInterval){
     	clock.start();
     	addPathCucumber();
-    	if(hasCollided){
-			score-=1.0;
+    	if(!hasCollided){
+			score+=2*treeReleaseInterval;
 			scoreText.innerHTML=score.toString();
-			hasCollided=false;
 		}
     }
     doTreeLogic();
     doExplosionLogic();
     render();
-	requestAnimationFrame(update); //request next update
+	requestAnimationFrame(update);//request next update
 }
 function doTreeLogic(){
 	var oneTree;
