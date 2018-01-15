@@ -2,6 +2,7 @@
 /*global Stats*/
 window.addEventListener('load', init, false);
 
+var now = new Date().getTime();
 var sceneWidth;
 var sceneHeight;
 var camera;
@@ -19,7 +20,7 @@ var worldRadius=26;
 var heroRadius=0.3;
 var sphericalHelper;
 var pathAngleValues;
-var heroBaseY=1.8;
+var heroBaseY=1.9;
 var bounceValue=0.1;
 var gravity=0.005;
 var leftLane=-1;
@@ -189,7 +190,6 @@ function addHero(){
 
 
     var loader = new THREE.JSONLoader();
-	console.log("1");
 
 
 
@@ -212,7 +212,6 @@ function addHero(){
             heroSphere.position.z=4.8;
             currentLane=middleLane;
             heroSphere.position.x=currentLane;
-            console.log("3");
         }
     );
 
@@ -373,58 +372,11 @@ function createCucumber(){
     cucumber.add(cucumberfeetfinal);
 	return cucumber;
 }
-function blowUpTree(vertices,sides,currentTier,scalarMultiplier,odd){
-	var vertexIndex;
-	var vertexVector= new THREE.Vector3();
-	var midPointVector=vertices[0].clone();
-	var offset;
-	for(var i=0;i<sides;i++){
-		vertexIndex=(currentTier*sides)+1;
-		vertexVector=vertices[i+vertexIndex].clone();
-		midPointVector.y=vertexVector.y;
-		offset=vertexVector.sub(midPointVector);
-		if(odd){
-			if(i%2===0){
-				offset.normalize().multiplyScalar(scalarMultiplier/6);
-				vertices[i+vertexIndex].add(offset);
-			}else{
-				offset.normalize().multiplyScalar(scalarMultiplier);
-				vertices[i+vertexIndex].add(offset);
-				vertices[i+vertexIndex].y=vertices[i+vertexIndex+sides].y+0.05;
-			}
-		}else{
-			if(i%2!==0){
-				offset.normalize().multiplyScalar(scalarMultiplier/6);
-				vertices[i+vertexIndex].add(offset);
-			}else{
-				offset.normalize().multiplyScalar(scalarMultiplier);
-				vertices[i+vertexIndex].add(offset);
-				vertices[i+vertexIndex].y=vertices[i+vertexIndex+sides].y+0.05;
-			}
-		}
-	}
-}
-
-function tightenTree(vertices,sides,currentTier){
-	var vertexIndex;
-	var vertexVector= new THREE.Vector3();
-	var midPointVector=vertices[0].clone();
-	var offset;
-	for(var i=0;i<sides;i++){
-		vertexIndex=(currentTier*sides)+1;
-		vertexVector=vertices[i+vertexIndex].clone();
-		midPointVector.y=vertexVector.y;
-		offset=vertexVector.sub(midPointVector);
-		offset.normalize().multiplyScalar(0.06);
-		vertices[i+vertexIndex].sub(offset);
-	}
-}
 
 function update(){
 	stats.update();
     //animate
     rollingGroundSphere.rotation.x += rollingSpeed;
-    console.log("2");
 	heroSphere.rotation.x -= heroRollingSpeed;
 	if (heroSphere.position.y <= heroBaseY) {
 		jumping = false;
@@ -437,17 +389,40 @@ function update(){
     if(clock.getElapsedTime()>treeReleaseInterval){
     	clock.start();
     	addPathCucumber();
-    	if(hasCollided){
+    	if(hasCollided && (new Date().getTime() > now + 500)){ //damit nicht 2 auf 1 mal abgezogen werden
+    		now = new Date().getTime();
 			score-=1.0;
 			scoreText.innerHTML=score.toString();
 			hasCollided=false;
 		}
+		if(score=== 0.0){
+			rollingSpeed = 0;
+			heroRollingSpeed = 0;
+			gravity = 10000;
+            // if(sweetAlert("GAME OVER! \n\nTry again!")){}
+            // else    window.location.reload();
+            swal({
+                    title: "Are you sure?",
+                    text: "Do you want to change the dropdown?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes",
+                    closeOnConfirm: true
+                },
+                function(isConfirm) {
+                    if (isConfirm) {
+                        window.location.reload();
+                    }
+                });
+        }
     }
     doTreeLogic();
     doExplosionLogic();
     render();
 	requestAnimationFrame(update);//request next update
 }
+
 function doTreeLogic(){
 	var oneTree;
 	var treePos = new THREE.Vector3();
@@ -459,7 +434,7 @@ function doTreeLogic(){
 			treesToRemove.push(oneTree);
 		}else{//check collision
 			if(treePos.distanceTo(heroSphere.position)<=0.6){
-				console.log("hit");
+				//console.log("hit");
 				hasCollided=true;
 				explode();
 			}
@@ -472,7 +447,6 @@ function doTreeLogic(){
 		treesInPath.splice(fromWhere,1);
 		cucumberPool.push(oneTree);
 		oneTree.visible=false;
-		console.log("remove tree");
 	});
 }
 function doExplosionLogic(){
