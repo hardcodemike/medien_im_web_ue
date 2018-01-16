@@ -102,11 +102,12 @@ function createScene(){
     //create the text for the lives
     scoreLabel = document.createElement('div');
     scoreLabel.style.position = 'absolute';
-    scoreLabel.style.width = 75;
+    scoreLabel.style.width = 50+ '%';
     scoreLabel.style.height = 100;
     scoreLabel.innerHTML = 'Lives left: ';
-    scoreLabel.style.top = 10 + 'px';
-    scoreLabel.style.left = 100 +'px';
+    scoreLabel.style.top = 1 + '%';
+    scoreLabel.style.left = 46 +'%';
+	scoreLabel.style.fontSize = 'larger';
     document.body.appendChild(scoreLabel);
 
 	scoreText = document.createElement('div');
@@ -116,8 +117,9 @@ function createScene(){
 	scoreText.style.height = 100;
 	//scoreText.style.backgroundColor = "blue";
 	scoreText.innerHTML = "9";
-	scoreText.style.top = 10 + 'px';
-	scoreText.style.left = 175 + 'px';
+	scoreText.style.top = 1 + '%';
+	scoreText.style.left = 51 + '%';
+	scoreText.style.fontSize = 'larger';
 	document.body.appendChild(scoreText);
 }
 function addExplosion(){
@@ -323,29 +325,6 @@ function addCucumber(inPath, row, isLeft){
 	rollingGroundSphere.add(newCucumber);
 }
 function createCucumber(){
-	// var sides=8;
-	// var tiers=6;
-	// var scalarMultiplier=(Math.random()*(0.25-0.1))+0.05;
-	// var midPointVector= new THREE.Vector3();
-	// var vertexVector= new THREE.Vector3();
-	// var treeGeometry = new THREE.ConeGeometry( 0.5, 1, sides, tiers);
-	// var treeMaterial = new THREE.MeshStandardMaterial( { color: 0x33ff33,shading:THREE.FlatShading  } );
-	// var offset;
-	// midPointVector=treeGeometry.vertices[0].clone();
-	// var currentTier=0;
-	// var vertexIndex;
-	// blowUpTree(treeGeometry.vertices,sides,0,scalarMultiplier);
-	// tightenTree(treeGeometry.vertices,sides,1);
-	// blowUpTree(treeGeometry.vertices,sides,2,scalarMultiplier*1.1,true);
-	// tightenTree(treeGeometry.vertices,sides,3);
-	// blowUpTree(treeGeometry.vertices,sides,4,scalarMultiplier*1.2);
-	// tightenTree(treeGeometry.vertices,sides,5);
-	// var treeTop = new THREE.Mesh( treeGeometry, treeMaterial );
-	// treeTop.castShadow=true;
-	// treeTop.receiveShadow=false;
-	// treeTop.position.y=0.9;
-	// treeTop.rotation.y=(Math.random()*(Math.PI));
-
 	// CUCUMBER MAKING PROCCES BY HARDCODEMIKE
 	// cucumber body
 	var cucumberTrunkGeometry = new THREE.CylinderGeometry( 0.1, 0.1,0.6,12,1,false,0.1);
@@ -402,12 +381,12 @@ function update(){
             // if(sweetAlert("GAME OVER! \n\nTry again!")){}
             // else    window.location.reload();
             swal({
-                    title: "Are you sure?",
-                    text: "Do you want to change the dropdown?",
-                    type: "warning",
+                    title: "Game Over!",
+                    text: "All lives lost!",
+                    type: "error",
                     showCancelButton: true,
                     confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "Yes",
+                    confirmButtonText: "Try again!",
                     closeOnConfirm: true
                 },
                 function(isConfirm) {
