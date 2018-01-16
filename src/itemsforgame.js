@@ -38,18 +38,18 @@ function createScene(){
     renderer.shadowMap.enabled = true;//enable shadow
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setSize( sceneWidth, sceneHeight );
-    dom = document.getElementById('TutContainer');
+    dom = document.getElementById('QuickMathsContainer');
 	dom.appendChild(renderer.domElement);
 	
 	
 	//add items to scene
-	var numTrees=10;
-	var newTree;
-	for(var i=0;i<numTrees;i++){
-		newTree=createTree();
-		newTree.position.z=i*-2;
-		newTree.rotation.z=(Math.random()*(2*Math.PI/10))+-Math.PI/10;
-		scene.add(newTree);
+	var numCucumbers=10;
+	var newCucumber;
+	for(var i=0;i<numCucumbers;i++){
+		newCucumber=createCucumber();
+		newCucumber.position.z=i*-2;
+		newCucumber.rotation.z=(Math.random()*(2*Math.PI/10))+-Math.PI/10;
+		scene.add(newCucumber);
 	}
 	//addGround();
 	
@@ -150,39 +150,39 @@ function addGround(){
 	ground.rotation.x=-Math.PI/2;
 	scene.add( ground );
 }
-function createTree(){
+function createCucumber(){
 	var sides=8;
 	var tiers=6;
 	var scalarMultiplier=(Math.random()*(0.25-0.1))+0.05;
 	var midPointVector= new THREE.Vector3();
 	var vertexVector= new THREE.Vector3();
-	var treeGeometry = new THREE.ConeGeometry( 0.5, 1, sides, tiers);
-	var treeMaterial = new THREE.MeshStandardMaterial( { color: 0x33ff33,shading:THREE.FlatShading  } );
+	var cucumberGeometry = new THREE.ConeGeometry( 0.5, 1, sides, tiers);
+	var cucumberMaterial = new THREE.MeshStandardMaterial( { color: 0x33ff33,shading:THREE.FlatShading  } );
 	var offset;
-	midPointVector=treeGeometry.vertices[0].clone();
+	midPointVector=cucumberGeometry.vertices[0].clone();
 	var currentTier=0;
 	var vertexIndex;
-	blowUpTree(treeGeometry.vertices,sides,0,scalarMultiplier);
-	tightenTree(treeGeometry.vertices,sides,1);
-	blowUpTree(treeGeometry.vertices,sides,2,scalarMultiplier*1.1,true);
-	tightenTree(treeGeometry.vertices,sides,3);
-	blowUpTree(treeGeometry.vertices,sides,4,scalarMultiplier*1.2);
-	tightenTree(treeGeometry.vertices,sides,5);
-	var treeTop = new THREE.Mesh( treeGeometry, treeMaterial );
-	treeTop.castShadow=true;
-	treeTop.receiveShadow=false;
-	treeTop.position.y=0.9;
-	treeTop.rotation.y=(Math.random()*(Math.PI));
-	var treeTrunkGeometry = new THREE.CylinderGeometry( 0.1, 0.1,0.5);
+	blowUpCucumber(cucumberGeometry.vertices,sides,0,scalarMultiplier);
+	tightenCucumber(cucumberGeometry.vertices,sides,1);
+	blowUpCucumber(cucumberGeometry.vertices,sides,2,scalarMultiplier*1.1,true);
+	tightenCucumber(cucumberGeometry.vertices,sides,3);
+	blowUpCucumber(cucumberGeometry.vertices,sides,4,scalarMultiplier*1.2);
+	tightenCucumber(cucumberGeometry.vertices,sides,5);
+	var cucumberTop = new THREE.Mesh( cucumberGeometry, cucumberMaterial );
+	cucumberTop.castShadow=true;
+	cucumberTop.receiveShadow=false;
+	cucumberTop.position.y=0.9;
+	cucumberTop.rotation.y=(Math.random()*(Math.PI));
+	var cucumberTrunkGeometry = new THREE.CylinderGeometry( 0.1, 0.1,0.5);
 	var trunkMaterial = new THREE.MeshStandardMaterial( { color: 0x886633,shading:THREE.FlatShading  } );
-	var treeTrunk = new THREE.Mesh( treeTrunkGeometry, trunkMaterial );
-	treeTrunk.position.y=0.25;
-	var tree =new THREE.Object3D();
-	tree.add(treeTrunk);
-	tree.add(treeTop);
-	return tree;
+	var cucumberTrunk = new THREE.Mesh( cucumberTrunkGeometry, trunkMaterial );
+	cucumberTrunk.position.y=0.25;
+	var cucumber =new THREE.Object3D();
+	cucumber.add(cucumberTrunk);
+	cucumber.add(cucumberTop);
+	return cucumber;
 }
-function blowUpTree(vertices,sides,currentTier,scalarMultiplier,odd){
+function blowUpCucumber(vertices,sides,currentTier,scalarMultiplier,odd){
 	var vertexIndex;
 	var vertexVector= new THREE.Vector3();
 	var midPointVector=vertices[0].clone();
@@ -213,7 +213,7 @@ function blowUpTree(vertices,sides,currentTier,scalarMultiplier,odd){
 		}
 	}
 }
-function tightenTree(vertices,sides,currentTier){
+function tightenCucumber(vertices,sides,currentTier){
 	var vertexIndex;
 	var vertexVector= new THREE.Vector3();
 	var midPointVector=vertices[0].clone();

@@ -10,7 +10,6 @@ var scene;
 var renderer;
 var dom;
 var sun;
-var ground;
 var orbitControl;
 var rollingGroundSphere;
 var heroSphere;
@@ -29,9 +28,8 @@ var middleLane=0;
 var currentLane;
 var clock;
 var jumping;
-var treeReleaseInterval=0.5;
-var lastTreeReleaseTime=0;
-var treesInPath;
+var cucumberReleaseInterval=0.5;
+var cucumbersInPath;
 var cucumberPool;
 var particleGeometry;
 var particleCount=20;
@@ -54,7 +52,7 @@ function init() {
 function createScene(){
 	hasCollided=false;
 	score=9;
-	treesInPath=[];
+	cucumbersInPath=[];
 	cucumberPool=[];
 	clock=new THREE.Clock();
 	clock.start();
@@ -71,7 +69,7 @@ function createScene(){
     renderer.shadowMap.enabled = true;//enable shadow
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setSize( sceneWidth, sceneHeight );
-    dom = document.getElementById('TutContainer');
+    dom = document.getElementById('QuickMathsContainer');
 	dom.appendChild(renderer.domElement);
 	stats = new Stats();
 	dom.appendChild(stats.dom);
@@ -303,8 +301,8 @@ function addCucumber(inPath, row, isLeft){
 		if(cucumberPool.length==0)return;
 		newCucumber=cucumberPool.pop();
 		newCucumber.visible=true;
-		//console.log("add tree");
-		treesInPath.push(newCucumber);
+		//console.log("add cucumber");
+		cucumbersInPath.push(newCucumber);
 		sphericalHelper.set( worldRadius-0.3, pathAngleValues[row], -rollingGroundSphere.rotation.x+4 );
 	}else{
 		newCucumber=createCucumber();
@@ -365,7 +363,7 @@ function update(){
 	heroSphere.position.x = THREE.Math.lerp(heroSphere.position.x, currentLane, 2 * clock.getDelta());//clock.getElapsedTime());
 
     bounceValue-=gravity;
-    if(clock.getElapsedTime()>treeReleaseInterval){
+    if(clock.getElapsedTime()>cucumberReleaseInterval){
     	clock.start();
     	addPathCucumber();
     	if(hasCollided && (new Date().getTime() > now + 500)){ //damit nicht 2 auf 1 mal abgezogen werden
@@ -377,16 +375,16 @@ function update(){
 		if(score=== 0.0){
 			rollingSpeed = 0;
 			heroRollingSpeed = 0;
-			gravity = 10000;
+			gravity = 0;
             // if(sweetAlert("GAME OVER! \n\nTry again!")){}
             // else    window.location.reload();
             swal({
                     title: "Game Over!",
-                    text: "All lives lost!",
+                    text: "Cat is dead! Goes to heaven now!",
                     type: "error",
                     showCancelButton: true,
                     confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "Try again!",
+                    confirmButtonText: "Try (die) again!",
                     closeOnConfirm: true
                 },
                 function(isConfirm) {
@@ -396,23 +394,23 @@ function update(){
                 });
         }
     }
-    doTreeLogic();
+    doCucumberLogic();
     doExplosionLogic();
     render();
 	requestAnimationFrame(update);//request next update
 }
 
-function doTreeLogic(){
-	var oneTree;
-	var treePos = new THREE.Vector3();
-	var treesToRemove=[];
-	treesInPath.forEach( function ( element, index ) {
-		oneTree=treesInPath[ index ];
-		treePos.setFromMatrixPosition( oneTree.matrixWorld );
-		if(treePos.z>6 &&oneTree.visible){//gone out of our view zone
-			treesToRemove.push(oneTree);
+function doCucumberLogic(){
+	var oneCucumber;
+	var cucumberPos = new THREE.Vector3();
+	var cucumbersToRemove=[];
+	cucumbersInPath.forEach( function ( element, index ) {
+		oneCucumber=cucumbersInPath[ index ];
+		cucumberPos.setFromMatrixPosition( oneCucumber.matrixWorld );
+		if(cucumberPos.z>6 &&oneCucumber.visible){//gone out of our view zone
+			cucumbersToRemove.push(oneCucumber);
 		}else{//check collision
-			if(treePos.distanceTo(heroSphere.position)<=0.6){
+			if(cucumberPos.distanceTo(heroSphere.position)<=0.6){
 				//console.log("hit");
 				hasCollided=true;
 				explode();
@@ -420,12 +418,12 @@ function doTreeLogic(){
 		}
 	});
 	var fromWhere;
-	treesToRemove.forEach( function ( element, index ) {
-		oneTree=treesToRemove[ index ];
-		fromWhere=treesInPath.indexOf(oneTree);
-		treesInPath.splice(fromWhere,1);
-		cucumberPool.push(oneTree);
-		oneTree.visible=false;
+	cucumbersToRemove.forEach( function ( element, index ) {
+		oneCucumber=cucumbersToRemove[ index ];
+		fromWhere=cucumbersInPath.indexOf(oneCucumber);
+		cucumbersInPath.splice(fromWhere,1);
+		cucumberPool.push(oneCucumber);
+		oneCucumber.visible=false;
 	});
 }
 function doExplosionLogic(){
