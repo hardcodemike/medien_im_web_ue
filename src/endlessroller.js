@@ -378,6 +378,7 @@ function update(){
 			gravity = 0;
             // if(sweetAlert("GAME OVER! \n\nTry again!")){}
             // else    window.location.reload();
+			scoreText = 0;
             swal({
                     title: "Game Over!",
                     text: "Cat is dead! Goes to heaven now!",
